@@ -3,7 +3,7 @@
 
 A AndroidStudio application.
 
-一个移植[FMOD](https://www.fmod.com/)音效引擎的AndroidStudio工程
+集成[FMOD](https://www.fmod.com/)音效引擎的AndroidStudio工程
 
 ## Getting Started
 
@@ -13,5 +13,9 @@ A few resources to get you started :
 
 - [FMOD](https://www.fmod.com/)
 
+The FMOD libraries can be found in the :calling: Android file downloadable at http://www.fmod.com/download
+
+For more information about the FMOD API, online documentation is available at
+[https://www.fmod.com/resources/documentation-api?version=2.0&page=welcome.html](https://www.fmod.com/resources/documentation-api?version=2.0&page=welcome.html)
 
 
