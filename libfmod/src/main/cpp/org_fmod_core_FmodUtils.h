@@ -10,10 +10,10 @@ extern "C" {
 /*
  * Class:     org_fmod_core_FmodUtils
  * Method:    playSound
- * Signature: (Ljava/lang/String;)V
+ * Signature: (Ljava/lang/String;I)V
  */
 JNIEXPORT void JNICALL Java_org_fmod_core_FmodUtils_playSound
-  (JNIEnv *, jclass, jstring);
+  (JNIEnv *, jclass, jstring, jint);
 
 /*
  * Class:     org_fmod_core_FmodUtils

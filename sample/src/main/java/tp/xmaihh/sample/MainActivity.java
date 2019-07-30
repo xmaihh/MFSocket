@@ -9,17 +9,27 @@ import android.view.View;
 
 import org.fmod.core.FmodUtils;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class MainActivity extends Activity {
+    ExecutorService pool = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        FmodUtils.getInstance(this);
     }
 
     public void playSound(View view) {
 //        FmodUtils.stopSound();
-        FmodUtils.getInstance(this).playSound("file:///android_asset/singing.wav");
+        pool.execute(new Runnable() {
+            @Override
+            public void run() {
+                FmodUtils.playSound("file:///android_asset/singing.wav", 2);
+            }
+        });
 
 //        MediaPlayer player;
 //        try {

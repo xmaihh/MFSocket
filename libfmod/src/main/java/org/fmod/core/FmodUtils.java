@@ -32,7 +32,28 @@ public class FmodUtils {
         System.loadLibrary("playsound");
     }
 
-    public static native void playSound(String path);
+    public enum Effect {
+        ORIGINAL(0),  //原声
+        LOLITA(1), //萝莉
+        UNCLE(2),  //大叔
+        THRILLER(3), //惊悚
+        FUNNY(4),  //搞怪
+        ETHEREAL(5), //空灵
+        DRAWL(6), //慢吞吞
+        CHORUS(7);//合唱
+        int mode;
+
+        Effect(int i) {
+            mode = i;
+        }
+
+        public int getMode() {
+            return mode;
+        }
+    }
+
+    public static native void playSound(String path, int effect_mode);
+
     public static native void stopSound();
 
 
