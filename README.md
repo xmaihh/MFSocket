@@ -1,4 +1,5 @@
-:fish:
+:whale:
+
 # MFSocket
 
 A AndroidStudio application.
