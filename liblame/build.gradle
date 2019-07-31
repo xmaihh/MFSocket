@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 29
@@ -6,7 +6,6 @@ android {
 
 
     defaultConfig {
-        applicationId "tp.xmaihh.sample"
         minSdkVersion 14
         targetSdkVersion 29
         versionCode 1
@@ -22,11 +21,16 @@ android {
         }
     }
 
+    //*
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
+    }
+
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(path: ':libfmod')
-    implementation project(path: ':librecord')
 
 }

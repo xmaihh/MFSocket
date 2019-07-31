@@ -5,9 +5,20 @@
     android:orientation="vertical">
 
     <Button
-        android:onClick="playSound"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="playSound"
         android:text="play sound" />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="startRecording"
+        android:text="start Recording" />
+
+    <Button
+        android:onClick="mp3Recording"
+        android:text="MP3 Recording"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>
