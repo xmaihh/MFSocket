@@ -17,3 +17,6 @@
 .externalNativeBuild
 
 .README.md.swp
+libs/
+src/main/cpp/com_android_liblame_MP3Recorder.h
+src/main/res/drawable/

@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">sample</string>
+    <string name="mr_title"> Record Audio Example. \n</string>
+    <string name="mr_outputformat">OutputFormat:</string>
+    <string name="mr_pause">pause</string>
+    <string name="mr_resume">resume</string>
+    <string name="mr_samplingrate">SamplingRate:</string>
+    <string name="mr_bitrate">BitRate:</string>
 </resources>

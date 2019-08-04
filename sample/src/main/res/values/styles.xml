@@ -1,7 +1,10 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme">
+    <style name="AppTheme"></style>
+
+    <style name="textViewStyle">
+        <item name="android:textSize">10sp</item>
     </style>
 
 </resources>

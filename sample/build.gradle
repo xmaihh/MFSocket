@@ -28,5 +28,5 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(path: ':libfmod')
     implementation project(path: ':librecord')
-
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 }
