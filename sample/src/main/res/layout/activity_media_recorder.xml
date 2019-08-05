@@ -34,12 +34,14 @@
         app:layout_constraintTop_toBottomOf="@id/mr_tvOutputFormat">
 
         <RadioButton
+            android:id="@+id/mr_rbOutputFormat_aac"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="aac"
             android:textSize="10sp" />
 
         <RadioButton
+            android:id="@+id/mr_rbOutputFormat_mp3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
@@ -47,18 +49,21 @@
             android:textSize="10sp" />
 
         <RadioButton
+            android:id="@+id/mr_rbOutputFormat_wav"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="wav"
             android:textSize="10sp" />
 
         <RadioButton
+            android:id="@+id/mr_rbOutputFormat_pcm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="pcm"
             android:textSize="10sp" />
 
         <RadioButton
+            android:id="@+id/mr_rbOutputFormat_amr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="amr"
@@ -86,22 +91,32 @@
         app:layout_constraintTop_toBottomOf="@id/mr_tvSamplingRate">
 
         <RadioButton
+            android:id="@+id/mr_rbSamplingRate_800"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="800Hz"
             android:textSize="10sp" />
 
         <RadioButton
+            android:id="@+id/mr_rbSamplingRate_1600"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="1600Hz"
             android:textSize="10sp" />
 
         <RadioButton
+            android:id="@+id/mr_rbSamplingRate_44100"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
             android:text="44100Hz"
+            android:textSize="10sp" />
+
+        <RadioButton
+            android:id="@+id/mr_rbSamplingRate_48000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="48000Hz"
             android:textSize="10sp" />
 
     </RadioGroup>
@@ -127,12 +142,14 @@
         app:layout_constraintTop_toBottomOf="@id/mr_tvBitrate">
 
         <RadioButton
+            android:id="@+id/mr_rbBitrate_8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="8Bit"
             android:textSize="10sp" />
 
         <RadioButton
+            android:id="@+id/mr_rbBitrate_16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"

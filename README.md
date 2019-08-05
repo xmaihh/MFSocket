@@ -23,3 +23,8 @@ For more information about the FMOD API, online documentation is available at
 - [liblame@v3.100](https://github.com/xmaihh/MFSocket/tree/master/liblame)
 
 The LAME libraries can be found in the :notes: file downloadable at https://sourceforge.net/projects/lame/files/lame/
+
+
+- [librecord@v00.00.00](https://github.com/xmaihh/MFSocket/tree/master/librecord)
+
+The RECORD libraries can be found int the :cyclone:  [AudioRecordConfig](https://github.com/xmaihh/MFSocket/blob/master/librecord/src/main/java/com/android/librecord/AudioRecordConfig.java)

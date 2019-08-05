@@ -12,7 +12,7 @@
  
  ## native方法
  
- [MP3Recorder.java](https://github.com/xmaihh/MFSocket/blob/master/liblame/src/main/java/com/android/liblame/MP3Recorder.java)
+ [MP3Recorder.java](https://github.com/xmaihh/MFSocket/blob/4730c4bbacfb3bd9c25d9cf32929e67304a639d2/liblame/src/main/java/com/android/liblame/MP3Recorder.java)
  
  ```java
  public class MP3Recorder {
@@ -78,7 +78,7 @@
 
 Android调用录制MP3的例子
 
-[MP3RecordUtil.java](https://github.com/xmaihh/MFSocket/blob/master/librecord/src/main/java/com/android/librecord/mp3/MP3RecordUtil.java)
+[MP3RecordUtil.java](https://github.com/xmaihh/MFSocket/blob/4730c4bbacfb3bd9c25d9cf32929e67304a639d2/librecord/src/main/java/com/android/librecord/mp3/MP3RecordUtil.java)
 
 在 AndroidManifest 配置文件中添加录音权限：
 
@@ -89,4 +89,4 @@ Android调用录制MP3的例子
  Android 6.0 以上自行实现动态获取权限。
  
  
-<div align=center><img src="https://github.com/xmaihh/MFSocket/raw/master/art/sample.png" width="270" height="480"/></div>
+<div align=center><img src="https://github.com/xmaihh/MFSocket/raw/master/art/sample.png" width="300" height="500"/></div>
