@@ -6,6 +6,8 @@ import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.android.librecord.AudioRecord;
+
 public class MediaRecorderActivity extends Activity {
     private RadioGroup mRGOutputFormat;
     private RadioGroup mRGSamplingRate;
@@ -26,5 +28,6 @@ public class MediaRecorderActivity extends Activity {
         mTvFilePath = findViewById(R.id.mr_tvFilePath);
         mTvRecordState = findViewById(R.id.mr_tvTimeState);
         mBtnRecord = findViewById(R.id.mr_btnRecorder);
+
     }
 }

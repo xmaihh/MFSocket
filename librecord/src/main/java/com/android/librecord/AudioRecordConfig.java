@@ -23,7 +23,7 @@ public class AudioRecordConfig {
      * @param outputFormat  输出格式 {@link AudioRecordConfig.OutputFormat}
      * @see <a href="http://en.wikipedia.org/wiki/Sampling_rate">Sampling_rate</a>
      */
-    public AudioRecordConfig(int audioSource, int sampleRate, int channelConfig, int audioFormat, int outputFormat) {
+    public AudioRecordConfig(int audioSource, int sampleRate, int channelConfig, int audioFormat, OutputFormat outputFormat) {
         this.audioSource = audioSource;
         this.sampleRate = sampleRate;
         this.channelConfig = channelConfig;
@@ -40,18 +40,40 @@ public class AudioRecordConfig {
     // 采样位数
     int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
     // 输出格式
-    int outputFormat = OutputFormat.MP3;
+    OutputFormat outputFormat = OutputFormat.MP3;
 
 
-    public final class OutputFormat {
-        public static final int AAC = 0;
-        public static final int MP3 = 1;
-        public static final int WAV = 2;
-        public static final int PCM = 3;
-        public static final int AMR = 4;
+    enum OutputFormat {
+        AAC(0, ".aac"),
+        MP3(1, ".mp3"),
+        WAV(2, ".wav"),
+        PCM(3, ".pcm"),
+        AMR(4, ".amr");
 
-        OutputFormat() {
-            throw new RuntimeException("Stub!");
+        public static String getName(int index) {
+            for (OutputFormat format : OutputFormat.values()) {
+                if (format.getIndex() == index) {
+                    return format.name;
+                }
+            }
+            return null;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+
+        public String getName() {
+            return name;
+        }
+
+        private int index;
+        private String name;
+
+        OutputFormat(int index, String name) {
+            this.index = index;
+            this.name = name;
         }
     }
 
