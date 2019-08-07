@@ -15,7 +15,7 @@ import java.io.IOException;
  * 录制 mp3 格式音频（编译lame库）
  */
 
-public class MP3RecordUtil {
+public class mp3 {
     // 录音状态
     private boolean isRecording;
 

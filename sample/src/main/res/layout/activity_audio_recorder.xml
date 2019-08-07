@@ -180,7 +180,7 @@
         app:layout_constraintTop_toBottomOf="@id/mr_tvTimeState" />
 
     <Button
-        android:id="@+id/mr_btnRecorder"
+        android:id="@+id/mr_btnStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
@@ -190,5 +190,29 @@
         android:textSize="10sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mr_tvFilePath" />
+
+    <Button
+        android:id="@+id/mr_btnPause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:text="Pause"
+        android:textAllCaps="false"
+        android:textSize="10sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mr_btnStart" />
+
+    <Button
+        android:id="@+id/mr_btnStop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:text="Stop"
+        android:textAllCaps="false"
+        android:textSize="10sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mr_btnPause" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-package com.android.librecord.audio;
+package com.android.librecord.wav;
 
 import android.content.Context;
 import android.media.AudioFormat;
@@ -12,7 +12,7 @@ import java.io.RandomAccessFile;
  * AudioRecord录制wav格式音频
  */
 
-public class AudioRecordUtil {
+public class wav {
     // 录音状态
     private boolean isRecording = true;
 

@@ -1,16 +1,15 @@
-package com.android.librecord.audio;
+package com.android.librecord.wav;
 
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
-import android.media.AudioTrack;
 import android.media.MediaRecorder;
 
 /**
  * 实现边录边播（AudioRecord + AudioTrack）
  */
 
-public class AudioTrackUtil {
+public class AudioTrack {
     // 录音状态
     private boolean isRecording = true;
 
@@ -36,11 +35,11 @@ public class AudioTrackUtil {
                 // 音频类型
                 int streamType = AudioManager.STREAM_MUSIC;
                 // 静态音频还是音频流
-                int mode = AudioTrack.MODE_STREAM;
+                int mode = android.media.AudioTrack.MODE_STREAM;
                 //  获取播放最小缓存区大小
-                int playerBufferSize = AudioTrack.getMinBufferSize(sampleRate, channelConfig, audioFormat);
+                int playerBufferSize = android.media.AudioTrack.getMinBufferSize(sampleRate, channelConfig, audioFormat);
                 // 创建播放对象
-                AudioTrack audioTrack = new AudioTrack(streamType, sampleRate, channelConfig, audioFormat, playerBufferSize, mode);
+                android.media.AudioTrack audioTrack = new android.media.AudioTrack(streamType, sampleRate, channelConfig, audioFormat, playerBufferSize, mode);
 
                 // 缓存区
                 byte[] buffer = new byte[recorderBufferSize];

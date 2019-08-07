@@ -18,7 +18,10 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
     private RadioGroup mRGBitRate;
     private TextView mTvFilePath;
     private TextView mTvRecordState;
-    private Button mBtnRecord;
+    private Button mBtnStart;
+    private Button mBtnPause;
+    private Button mBtnStop;
+
     private AudioRecord mAudioRecord;
 
     @Override
@@ -32,8 +35,13 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
         mRGBitRate = findViewById(R.id.mr_rgBitrate);
         mTvFilePath = findViewById(R.id.mr_tvFilePath);
         mTvRecordState = findViewById(R.id.mr_tvTimeState);
-        mBtnRecord = findViewById(R.id.mr_btnRecorder);
-        mBtnRecord.setOnClickListener(this);
+        mBtnStart = findViewById(R.id.mr_btnStart);
+        mBtnPause = findViewById(R.id.mr_btnPause);
+        mBtnStop = findViewById(R.id.mr_btnStop);
+
+        mBtnStart.setOnClickListener(this);
+        mBtnPause.setOnClickListener(this);
+        mBtnStop.setOnClickListener(this);
 
         mAudioRecord = new AudioRecord(
                 new AudioRecordConfig(
@@ -50,7 +58,7 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.mr_btnRecorder) {
+        if (view.getId() == R.id.mr_btnStart) {
             mAudioRecord.start();
         }
     }

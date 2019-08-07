@@ -1,32 +1,24 @@
 package tp.xmaihh.sample;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.res.AssetFileDescriptor;
-import android.content.res.AssetManager;
-import android.media.AudioRecord;
-import android.media.MediaPlayer;
-import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.view.View;
 
-import com.android.librecord.audio.AudioRecordUtil;
-import com.android.librecord.audio.AudioTrackUtil;
-import com.android.librecord.media.MediaRecordUtil;
-import com.android.librecord.mp3.MP3RecordUtil;
+import com.android.librecord.wav.wav;
+import com.android.librecord.wav.AudioTrack;
+import com.android.librecord.mp3.mp3;
 
 import org.fmod.core.FmodUtils;
 
-import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MainActivity extends Activity {
     ExecutorService pool = Executors.newSingleThreadExecutor();
     boolean isPlaying = false;
-    private AudioRecordUtil mediaRecordUtil;
-    private AudioTrackUtil audioTrackUtil;
-    private MP3RecordUtil mp3RecordUtil;
+    private wav mediaRecordUtil;
+    private AudioTrack audioTrackUtil;
+    private mp3 mp3RecordUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,9 +75,9 @@ public class MainActivity extends Activity {
 //            mediaRecordUtil = null;
             isPlaying = false;
         } else {
-            audioTrackUtil = new AudioTrackUtil();
+            audioTrackUtil = new AudioTrack();
             audioTrackUtil.start();
-//            mediaRecordUtil = new AudioRecordUtil();
+//            mediaRecordUtil = new wav();
 //            mediaRecordUtil.startRecording(this);
             isPlaying = true;
         }
@@ -98,7 +90,7 @@ public class MainActivity extends Activity {
             mp3RecordUtil = null;
             isPlaying = false;
         } else {
-            mp3RecordUtil = new MP3RecordUtil();
+            mp3RecordUtil = new mp3();
             mp3RecordUtil.record(this);
             isPlaying = true;
         }

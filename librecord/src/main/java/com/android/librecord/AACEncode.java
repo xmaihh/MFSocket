@@ -130,7 +130,7 @@ public class AACEncode {
      * @param packetLen
      */
     private void addADTStoPacket(byte[] packet, int packetLen) {
-        int profile = 2;  //AAC LC
+        int profile = 2;  //wav LC
         int freqIdx = 4;  //44.1KHz
         int chanCfg = 2;  //双通道
         packet[0] = (byte) 0xFF;
