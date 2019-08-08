@@ -19,6 +19,8 @@ public class AudioRecord {
     private AACEncode mAacEncode;
     private MP3Encode mMp3Encode;
     private WAVEncode mWavEncode;
+    // 边录边播 开关
+    private boolean isPlaying = false;
 
     public AudioRecord(AudioRecordConfig recordConfig, String filePath, String fileName) {
         mExecutor = Executors.newCachedThreadPool();
@@ -195,6 +197,13 @@ public class AudioRecord {
         }
     }
 
+    public boolean isPlaying() {
+        return isPlaying;
+    }
+
+    public void setPlaying(boolean playing) {
+        isPlaying = playing;
+    }
 
     public static short[] bytesToShort(byte[] bytes) {
         if (bytes == null) {

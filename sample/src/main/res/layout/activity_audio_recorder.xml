@@ -174,29 +174,43 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
-        android:text="FilePath: SDCard/Android/data/tp.xmaihh.sample/cache/demo.mp3"
+        android:text="FilePath: SDCard/Android/data/data/tp.xmaihh.sample/cache/demo.mp3"
         android:textSize="10sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mr_tvTimeState" />
+
+    <Switch
+        android:id="@+id/mr_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:showText="true"
+        android:switchMinWidth="20dp"
+        android:text="RealTime(Plug in earphone)"
+        android:textOff="off"
+        android:textOn="on"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mr_tvFilePath" />
 
     <Button
         android:id="@+id/mr_btnStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="20dp"
-        android:text="Start recording"
+        android:layout_marginTop="10dp"
+        android:text="Start"
         android:textAllCaps="false"
         android:textSize="10sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/mr_tvFilePath" />
+        app:layout_constraintTop_toBottomOf="@id/mr_switch" />
 
     <Button
         android:id="@+id/mr_btnPause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:text="Pause"
         android:textAllCaps="false"
         android:textSize="10sp"
@@ -208,7 +222,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:text="Stop"
         android:textAllCaps="false"
         android:textSize="10sp"

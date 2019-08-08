@@ -1,7 +1,5 @@
 :notes:
 
-# liblame
-
 <div align=center><img src="https://github.com/xmaihh/MFSocket/raw/master/art/liblame.png" height="200"/></div>
 
  Android 中没有提供录制 mp3 的 API，需要使用开源库 lame，lame 是专门用于编码 mp3 的轻量高效的 c 代码库。
@@ -89,4 +87,4 @@ Android调用录制MP3的例子
  Android 6.0 以上自行实现动态获取权限。
  
  
-<div align=center><img src="https://github.com/xmaihh/MFSocket/raw/master/art/sample.png" width="300" height="500"/></div>
+<div align=center><img src="https://github.com/xmaihh/MFSocket/raw/master/art/sample.png" width="480" height="854"/></div>
