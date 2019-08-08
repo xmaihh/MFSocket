@@ -41,6 +41,7 @@ public class AACEncode {
         mEncoder.start();
 
         mInputBuffers = mEncoder.getInputBuffers();
+        mOutputBuffers = mEncoder.getOutputBuffers();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

@@ -23,7 +23,8 @@ public class MP3Recorder {
      * @param buffer_r 右声道输入数据
      * @param samples  输入数据的size
      * @param mp3buf   输出数据
-     * @return 输出到mp3buf的byte数量
+     * @return 输出到mp3buf的byte数量  计算公式:(7200 + buffer.length * 1.25)
+     * See {@link cpp/lame.h#lame_encode_buffer}
      */
     public static native int encode(short[] buffer_l, short[] buffer_r, int samples, byte[] mp3buf);
 

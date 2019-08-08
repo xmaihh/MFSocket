@@ -1,6 +1,6 @@
 package com.android.librecord;
 
-import com.android.liblame.MP3Recorder;
+import android.util.Log;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 
 public class AudioRecord {
     // 录音状态
-    private volatile static RecordState mState = RecordState.RELEASE;
+    private volatile static AudioRecordState mState = AudioRecordState.RELEASE;
     private ExecutorService mExecutor;
     private FileOutputStream mFileOutputStream;
     private RandomAccessFile mRandomAccessFile;
@@ -37,9 +37,10 @@ public class AudioRecord {
     private android.media.AudioRecord mAudioRecord;
 
     public void prepare() {
-        if (mState != RecordState.RELEASE) {
+        if (mState != AudioRecordState.RELEASE) {
             throw new IllegalStateException("AudioRecord is not yet initialized.");
         } else {
+            Log.d("521", "prepare: ");
             // 录音最小缓存大小
             bufferSizeInBytes = android.media.AudioRecord.getMinBufferSize(
                     mRecordConfig.sampleRate, mRecordConfig.channelConfig,
@@ -48,19 +49,28 @@ public class AudioRecord {
                     mRecordConfig.audioSource, mRecordConfig.sampleRate,
                     mRecordConfig.channelConfig,
                     mRecordConfig.bitRate, bufferSizeInBytes);
-            updateState(RecordState.PREPARE);
+            if (isPlaying()) {
+                AudioTrack.getInstance().prepare(mRecordConfig);
+            }
+            updateState(AudioRecordState.PREPARE);
         }
     }
 
+
     // 开始录音
     public void start() {
-        if (mState == RecordState.RECORDING) {
-            throw new IllegalStateException("Recording ... ");
+        if (mState == AudioRecordState.RECORDING) {
+            throw new IllegalStateException("AudioRecord is Recording.");
         }
-        if (mState == RecordState.RELEASE) {
+        if (mState == AudioRecordState.RELEASE) {
             throw new IllegalStateException("AudioRecord is not yet initialized.");
         }
-        updateState(RecordState.RECORDING);
+        Log.d("521", "start: ");
+        updateState(AudioRecordState.RECORDING);
+        mAudioRecord.startRecording();
+        if (isPlaying()) {
+            AudioTrack.getInstance().start();
+        }
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -76,23 +86,29 @@ public class AudioRecord {
 
     // 暂停
     public void pause() {
-        if (mState == RecordState.RECORDING) {
+        if (mState == AudioRecordState.RECORDING) {
+            Log.d("521", "pause: ");
             mAudioRecord.stop();
-            updateState(RecordState.PAUSE);
+            updateState(AudioRecordState.PAUSE);
         }
     }
 
     // 从暂停处恢复
     public void resume() {
-        if (mState != RecordState.PAUSE) {
+        Log.d("521", "resume: ");
+        if (mState != AudioRecordState.PAUSE) {
             throw new IllegalStateException("AudioRecord not in Status:pause. Cannot resume");
         } else {
             mAudioRecord.startRecording();
-            updateState(RecordState.RECORDING);
+            updateState(AudioRecordState.RECORDING);
             mExecutor.execute(new Runnable() {
                 @Override
                 public void run() {
-
+                    try {
+                        FSDataOutputStream();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         }
@@ -100,20 +116,27 @@ public class AudioRecord {
 
     // 停止录音
     public void stop() {
-        if (mState == RecordState.RECORDING || mState == RecordState.PAUSE) {
-            updateState(RecordState.RELEASE);
+        Log.d("521", "stop: ");
+        if (mState == AudioRecordState.RECORDING || mState == AudioRecordState.PAUSE) {
+            updateState(AudioRecordState.RELEASE);
             mAudioRecord.stop();
+            release();
         }
     }
 
     // 释放资源
     public void release() {
-        mAudioRecord.release();
-        MP3Recorder.close();
-        updateState(RecordState.RELEASE);
+        Log.d("521", "release: ");
+        try {
+            mAudioRecord.release();
+            updateState(AudioRecordState.RELEASE);
+            FSDataOutputStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    void updateState(RecordState recordState) {
+    void updateState(AudioRecordState recordState) {
         if (mState == recordState) {
             return;
         } else {
@@ -122,13 +145,14 @@ public class AudioRecord {
     }
 
     void initEncode() throws IOException {
-        mFileOutputStream = new FileOutputStream(strFilePath + strFileName + mRecordConfig.outputFormat.getName());
         switch (mRecordConfig.outputFormat) {
             case AAC:
+                mFileOutputStream = new FileOutputStream(strFilePath + strFileName + mRecordConfig.outputFormat.getName());
                 mAacEncode = new AACEncode();
                 mAacEncode.prepare();
                 break;
             case MP3:
+                mFileOutputStream = new FileOutputStream(strFilePath + strFileName + mRecordConfig.outputFormat.getName());
                 mMp3Encode = new MP3Encode(
                         mRecordConfig.sampleRate,
                         mRecordConfig.channelConfig,
@@ -137,26 +161,32 @@ public class AudioRecord {
                 mMp3Encode.prepare();
                 break;
             case WAV:
+                mFileOutputStream = new FileOutputStream(strFilePath + strFileName + mRecordConfig.outputFormat.getName());
                 mWavEncode = new WAVEncode();
                 mRandomAccessFile = new RandomAccessFile(strFilePath + strFileName + mRecordConfig.outputFormat.getName(), "rw");
                 // 留出文件头的位置
                 mRandomAccessFile.seek(44);
+                break;
+            case PCM:
+                mFileOutputStream = new FileOutputStream(strFilePath + strFileName + mRecordConfig.outputFormat.getName());
                 break;
         }
     }
 
     void FSDataOutputStream() throws IOException {
         // 文件输出流
-        short[] readBuffer = new short[bufferSizeInBytes];
-        mAudioRecord.startRecording();
-        while (mState == RecordState.RECORDING && mAudioRecord.getRecordingState() == android.media.AudioRecord.RECORDSTATE_RECORDING) {
-            int readSize = mAudioRecord.read(readBuffer, 0, bufferSizeInBytes);
-
+        byte[] readBuffer = new byte[bufferSizeInBytes];
+        int readSize = 0;
+        while (mState == AudioRecordState.RECORDING && mAudioRecord.getRecordingState() == android.media.AudioRecord.RECORDSTATE_RECORDING) {
+            readSize = mAudioRecord.read(readBuffer, 0, bufferSizeInBytes);
             // 编码
             Encode(readSize, readBuffer);
+            if (isPlaying()) {
+                AudioTrack.getInstance().play(readBuffer);
+            }
         }
 
-        if (mState == RecordState.RELEASE) {
+        if (mState == AudioRecordState.RELEASE) {
             switch (mRecordConfig.outputFormat) {
                 case MP3:
                     mMp3Encode.close(mFileOutputStream);
@@ -169,29 +199,40 @@ public class AudioRecord {
                             mRecordConfig.sampleRate * mRecordConfig.bitRate * mRecordConfig.channelConfig / 8);
                     break;
             }
-            mFileOutputStream.close();
-            mRandomAccessFile.close();
-            mAudioRecord.stop();
-            mAudioRecord.release();
+
+            if (mFileOutputStream != null) {
+                mFileOutputStream.close();
+            }
+            if (mRandomAccessFile != null) {
+                mRandomAccessFile.close();
+            }
         }
     }
 
-    void Encode(int readSize, short[] readBuffer) throws IOException {
-        if (readSize > 0) {
+    void Encode(int readSize, byte[] readBuffer) throws IOException {
+        if (readSize != android.media.AudioRecord.ERROR_INVALID_OPERATION) {
             switch (mRecordConfig.outputFormat) {
                 case PCM:
-                    mFileOutputStream.write(shortToBytes(readBuffer), 0, readBuffer.length);
+                    if (mFileOutputStream != null) {
+                        mFileOutputStream.write(readBuffer, 0, readBuffer.length);
+                    }
                     break;
                 case AMR:
                     break;
                 case AAC:
-                    mAacEncode.encode(readSize, shortToBytes(readBuffer), mFileOutputStream);
+                    if (mAacEncode != null && mFileOutputStream != null) {
+                        mAacEncode.encode(readSize, readBuffer, mFileOutputStream);
+                    }
                     break;
                 case MP3:
-                    mMp3Encode.encode(readSize, readBuffer, mFileOutputStream);
+                    if (mMp3Encode != null && mFileOutputStream != null) {
+                        mMp3Encode.encode(readSize, bytesToShort(readBuffer), mFileOutputStream);
+                    }
                     break;
                 case WAV:
-                    mRandomAccessFile.write(shortToBytes(readBuffer), 0, readSize);
+                    if (mRandomAccessFile != null) {
+                        mRandomAccessFile.write(readBuffer, 0, readSize);
+                    }
                     break;
             }
         }

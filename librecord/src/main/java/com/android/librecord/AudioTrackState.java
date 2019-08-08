@@ -1,24 +1,20 @@
 package com.android.librecord;
 
-public enum RecordState {
+public enum AudioTrackState {
     /**
      * 准备状态
      */
     PREPARE,
     /**
-     * 录音中
+     * 播放
      */
-    RECORDING,
-    /**
-     * 暂停中
-     */
-    PAUSE,
+    PLAYING,
     /**
      * 停止
      */
     STOP,
     /**
-     * 录音结束,释放资源
+     * 结束,释放资源
      */
     RELEASE
 }
