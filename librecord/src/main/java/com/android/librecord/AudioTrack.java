@@ -1,6 +1,7 @@
 package com.android.librecord;
 
 import android.media.AudioManager;
+import android.util.Log;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -55,7 +56,9 @@ public class AudioTrack {
     }
 
     public void playPCMFile(String filePath) {
+
         if (mState == AudioTrackState.PLAYING) {
+            Log.d("521", "playPCMFile: ");
             FileInputStream fis = null;
             try {
                 fis = new FileInputStream(filePath);

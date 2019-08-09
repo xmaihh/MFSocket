@@ -25,3 +25,18 @@ AudioTrack(int streamType, int sampleRateInHz, int channelConfig, int audioForma
     - MODE_STATIC : 直接把所有的数据加载到缓存区
     - MODE_STREAM ：需要多次write，一般用于从网络获取数据或者实时解码
    
+# 待办事项
+   
+- [x] 边录边播
+   
+- [x] 录制pcm
+- [x] pcm播放
+
+- [x] 录制aac
+- [x] aac播放
+
+- [ ] 录制mp3
+- [ ] mp3播放
+
+- [ ] 录制wav
+- [ ] wav播放
