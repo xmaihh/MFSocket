@@ -5,7 +5,6 @@ import android.util.Log;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 
@@ -26,12 +25,12 @@ public class AudioTrack {
             mPlayerBufferSize = android.media.AudioTrack.getMinBufferSize(
                     cf.sampleRate,
                     cf.channelConfig,
-                    cf.bitRate);
+                    cf.audioFormat);
             mAudioTrack = new android.media.AudioTrack(
                     AudioManager.STREAM_MUSIC,
                     cf.sampleRate,
                     cf.channelConfig,
-                    cf.bitRate,
+                    cf.audioFormat,
                     mPlayerBufferSize,
                     android.media.AudioTrack.MODE_STREAM);
             updateState(AudioTrackState.PREPARE);

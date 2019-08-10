@@ -1,5 +1,7 @@
 package com.android.librecord;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -15,6 +17,13 @@ public class WAVEncode {
      * @throws IOException
      */
     void WriteWaveFileHeader(RandomAccessFile raf, long fileLength, long sampleRate, int channels, long byteRate) throws IOException {
+
+        Log.d("521", "WriteWaveFileHeader: fileLength" + fileLength);
+        Log.d("521", "WriteWaveFileHeader: sampleRate" + sampleRate);
+        Log.d("521", "WriteWaveFileHeader: channels" + channels);
+        Log.d("521", "WriteWaveFileHeader: byteRate" + byteRate);
+
+
         long totalDataLen = fileLength + 36;
         byte[] header = new byte[44];
         header[0] = 'R'; // RIFF/WAVE header

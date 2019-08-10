@@ -17,6 +17,8 @@ Channel *channel = 0;
 DSP *dsp;
 
 void stopSound();
+
+void pauseSound(bool p);
 /*
  * Class:     org_fmod_core_FmodUtils
  * Method:    playSound
@@ -28,6 +30,8 @@ JNIEXPORT void JNICALL Java_org_fmod_core_FmodUtils_playSound
     const char *path = env->GetStringUTFChars(path_, 0);
     //是否播放
     bool isplaying = true;
+    //是否暂停
+    bool paused = false;
     //创建对象
     System_Create(&system);
 
@@ -224,10 +228,18 @@ JNIEXPORT void JNICALL Java_org_fmod_core_FmodUtils_playSound
     //阻塞线程
     //进程休眠 单位微秒 us
     //每秒钟判断是否在播放
-    while (isplaying) {
+    while (true) {
         channel->isPlaying(&isplaying);
-        usleep(1000 * 1000);
+        channel->getPaused(&paused);
+        if (isplaying) {
+            usleep(1000 * 1000);
+        } else if (paused) {
+            usleep(1000 * 1000);
+        } else {
+            break;
+        }
     }
+
     goto END;
 
     //释放资源
@@ -237,6 +249,21 @@ JNIEXPORT void JNICALL Java_org_fmod_core_FmodUtils_playSound
     system->close();
     system->release();
 
+}
+
+/*
+ * Class:     org_fmod_core_FmodUtils
+ * Method:    pauseSound
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_org_fmod_core_FmodUtils_pauseSound
+        (JNIEnv *env, jclass jclass1, bool p) {
+    pauseSound(p);
+}
+
+void pauseSound(bool paused) {
+    channel->getPaused(&paused);
+    channel->setPaused(paused);
 }
 
 /*

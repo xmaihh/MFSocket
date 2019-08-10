@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
+@Deprecated
 public class Uri2path {
     public String getRealPathFromURI(Context ctx, Uri contentUri) {
         String res = null;

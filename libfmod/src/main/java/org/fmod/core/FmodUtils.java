@@ -54,6 +54,8 @@ public class FmodUtils {
 
     public static native void playSound(String path, int effect_mode);
 
+    public static native void pauseSound(boolean paused);
+
     public static native void stopSound();
 
 

@@ -17,6 +17,14 @@ JNIEXPORT void JNICALL Java_org_fmod_core_FmodUtils_playSound
 
 /*
  * Class:     org_fmod_core_FmodUtils
+ * Method:    pauseSound
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_org_fmod_core_FmodUtils_pauseSound
+  (JNIEnv *, jclass,jboolean);
+
+/*
+ * Class:     org_fmod_core_FmodUtils
  * Method:    stopSound
  * Signature: ()V
  */

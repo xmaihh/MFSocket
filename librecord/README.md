@@ -27,7 +27,7 @@ AudioTrack(int streamType, int sampleRateInHz, int channelConfig, int audioForma
    
 # 待办事项
    
-- [x] 边录边播
+- [ ] 边录边播
    
 - [x] 录制pcm
 - [x] pcm播放
@@ -38,5 +38,9 @@ AudioTrack(int streamType, int sampleRateInHz, int channelConfig, int audioForma
 - [ ] 录制mp3
 - [ ] mp3播放
 
-- [ ] 录制wav
-- [ ] wav播放
+- [x] 录制wav
+- [x] wav播放
+
+ ~~录制amr~~
+ 
+- [ ] 录制amr

@@ -18,7 +18,11 @@ import android.widget.Toast;
 
 import com.android.librecord.AudioRecord;
 import com.android.librecord.AudioRecordConfig;
-import com.android.librecord.AudioTrack;
+import com.android.librecord.wav.wav;
+
+import org.fmod.core.FmodUtils;
+
+import java.io.File;
 
 public class AudioRecorderActivity extends Activity implements View.OnClickListener {
     private RadioGroup mRGOutputFormat;
@@ -34,6 +38,7 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
 
     private AudioRecord mAudioRecord;
     private AudioRecordConfig mConfig;
+    private String path;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +68,7 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
                 AudioRecordConfig.SampleRate.MID_QUALITY,
                 AudioFormat.CHANNEL_IN_STEREO,
                 AudioFormat.ENCODING_PCM_16BIT,
-                AudioRecordConfig.OutputFormat.PCM);
+                AudioRecordConfig.OutputFormat.WAV);
 
         mAudioRecord = new AudioRecord(mConfig, this.getExternalCacheDir() + "/",
                 "demo");
@@ -80,20 +85,30 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
     }
 
 
+    wav wav1 = new wav();
+
     @Override
     public void onClick(View view) {
         int id = view.getId();
         switch (id) {
             case R.id.mr_btnStart:
                 mAudioRecord.start();
+//                wav1.startRecording(this);
                 break;
             case R.id.mr_btnPause:
                 mAudioRecord.pause();
                 break;
             case R.id.mr_btnStop:
                 mAudioRecord.stop();
+//                wav1.stopRecording();
                 break;
             case R.id.mr_btnPlaySound:
+                if (path != null && checkExist(path)) {
+                    FmodUtils.getInstance(this).playSound(path, FmodUtils.Effect.ORIGINAL.getMode());
+                } else {
+                    Toast.makeText(this, "No file is selected.", Toast.LENGTH_LONG).show();
+                }
+                break;
             case R.id.mr_tvChooseFile:
                 chooseFile();
 //                AudioTrack.getInstance().prepare(mConfig);
@@ -127,7 +142,8 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == CHOOSE_FILE_CODE) {
                 Uri uri = data.getData();
-                mTvChooseFile.setText(uri.getPath());
+                path = uri.getPath();
+                mTvChooseFile.setText(path);
                 Log.d("521", "onActivityResult: " + uri.getEncodedPath());
             }
         } else {
@@ -139,8 +155,12 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
 
     @Override
     protected void onDestroy() {
+        FmodUtils.getInstance(this).close();
         super.onDestroy();
     }
 
-
+    public static boolean checkExist(String filepath) {
+        File file = new File(filepath);
+        return file.exists();
+    }
 }

@@ -1,5 +1,7 @@
 package com.android.librecord;
 
+import android.media.AudioFormat;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import java.io.FileOutputStream;
@@ -11,6 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class AudioRecord {
+    private String TAG = "521";
     // 录音状态
     private volatile static AudioRecordState mState = AudioRecordState.RELEASE;
     private ExecutorService mExecutor;
@@ -44,11 +47,11 @@ public class AudioRecord {
             // 录音最小缓存大小
             bufferSizeInBytes = android.media.AudioRecord.getMinBufferSize(
                     mRecordConfig.sampleRate, mRecordConfig.channelConfig,
-                    mRecordConfig.bitRate);
+                    mRecordConfig.audioFormat);
             mAudioRecord = new android.media.AudioRecord(
                     mRecordConfig.audioSource, mRecordConfig.sampleRate,
                     mRecordConfig.channelConfig,
-                    mRecordConfig.bitRate, bufferSizeInBytes);
+                    mRecordConfig.audioFormat, bufferSizeInBytes);
             if (isPlaying()) {
                 AudioTrack.getInstance().prepare(mRecordConfig);
             }
@@ -118,8 +121,11 @@ public class AudioRecord {
     public void stop() {
         Log.d("521", "stop: ");
         if (mState == AudioRecordState.RECORDING || mState == AudioRecordState.PAUSE) {
-            updateState(AudioRecordState.RELEASE);
+            updateState(AudioRecordState.STOP);
             mAudioRecord.stop();
+            if (isPlaying()) {
+                AudioTrack.getInstance().stop();
+            }
             release();
         }
     }
@@ -157,13 +163,13 @@ public class AudioRecord {
                         mRecordConfig.sampleRate,
                         mRecordConfig.channelConfig,
                         mRecordConfig.channelConfig,
-                        mRecordConfig.bitRate, 5);
+                        mRecordConfig.audioFormat, 5);
                 mMp3Encode.prepare();
                 break;
             case WAV:
-                mFileOutputStream = new FileOutputStream(strFilePath + strFileName + mRecordConfig.outputFormat.getName());
                 mWavEncode = new WAVEncode();
                 mRandomAccessFile = new RandomAccessFile(strFilePath + strFileName + mRecordConfig.outputFormat.getName(), "rw");
+                Log.d("521", "initEncode: " + mRandomAccessFile.getFD().toString());
                 // 留出文件头的位置
                 mRandomAccessFile.seek(44);
                 break;
@@ -192,11 +198,28 @@ public class AudioRecord {
                     mMp3Encode.close(mFileOutputStream);
                     break;
                 case WAV:
+                    int sampleRate = mRecordConfig.sampleRate;
+                    int channel = mRecordConfig.channelConfig;
+                    if (mRecordConfig.channelConfig == AudioFormat.CHANNEL_IN_STEREO) {
+                        channel = 2;
+                    } else if (mRecordConfig.channelConfig == AudioFormat.CHANNEL_IN_MONO) {
+                        channel = 1;
+                    }
+                    int bitRate = mRecordConfig.audioFormat;
+                    if (mRecordConfig.audioFormat == AudioFormat.ENCODING_PCM_8BIT) {
+                        bitRate = 8;
+                    } else if (mRecordConfig.audioFormat == AudioFormat.ENCODING_PCM_16BIT) {
+                        bitRate = 16;
+                    }
+
+                    Log.d(TAG, "FSDataOutputStream: " + channel + "-*-" + bitRate + "-*-" + sampleRate);
+
+                    long byteRate = sampleRate * bitRate * channel / 8;
                     mWavEncode.WriteWaveFileHeader(mRandomAccessFile,
                             mRandomAccessFile.length(),
                             mRecordConfig.sampleRate,
-                            mRecordConfig.channelConfig,
-                            mRecordConfig.sampleRate * mRecordConfig.bitRate * mRecordConfig.channelConfig / 8);
+                            channel,
+                            byteRate);
                     break;
             }
 
@@ -231,7 +254,8 @@ public class AudioRecord {
                     break;
                 case WAV:
                     if (mRandomAccessFile != null) {
-                        mRandomAccessFile.write(readBuffer, 0, readSize);
+                        Log.d("521", "Encode: ");
+                        mRandomAccessFile.write(readBuffer, 0, bufferSizeInBytes);
                     }
                     break;
             }
