@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import tp.xmaihh.sample.utils.Uri2path;
+
 public class AudioTrackActivity extends Activity implements View.OnClickListener {
 
     private TextView mTvChooseFile;
@@ -87,8 +89,22 @@ public class AudioTrackActivity extends Activity implements View.OnClickListener
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == CHOOSE_FILE_CODE) {
                 Uri uri = data.getData();
-                mTvChooseFile.setText(uri.getPath());
-                Log.d("521", "onActivityResult: " + uri.getEncodedPath());
+                if ("file".equalsIgnoreCase(uri.getScheme())) {//使用第三方应用打开
+                    path = uri.getPath();
+                    mTvChooseFile.setText(path);
+                    Toast.makeText(this, path + "11111", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {//Android4.4以上
+                    path = Uri2path.getPath(this, uri);
+                    mTvChooseFile.setText(path);
+                    Toast.makeText(this, path, Toast.LENGTH_SHORT).show();
+                } else {//4.4以下下系统调用方法
+                    path = Uri2path.getRealPathFromURI(this, uri);
+                    mTvChooseFile.setText(path);
+                    Toast.makeText(this, path + "222222", Toast.LENGTH_SHORT).show();
+                }
+
             }
         } else {
             Log.e(TAG1, "onActivityResult() error, resultCode: " + resultCode);

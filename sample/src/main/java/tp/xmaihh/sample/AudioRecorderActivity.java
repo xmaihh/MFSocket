@@ -18,11 +18,14 @@ import android.widget.Toast;
 
 import com.android.librecord.AudioRecord;
 import com.android.librecord.AudioRecordConfig;
+import com.android.librecord.mp3.mp3;
 import com.android.librecord.wav.wav;
 
 import org.fmod.core.FmodUtils;
 
 import java.io.File;
+
+import tp.xmaihh.sample.utils.Uri2path;
 
 public class AudioRecorderActivity extends Activity implements View.OnClickListener {
     private RadioGroup mRGOutputFormat;
@@ -66,9 +69,9 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
         mConfig = new AudioRecordConfig(
                 MediaRecorder.AudioSource.MIC,
                 AudioRecordConfig.SampleRate.MID_QUALITY,
-                AudioFormat.CHANNEL_IN_STEREO,
+                AudioFormat.CHANNEL_IN_MONO,
                 AudioFormat.ENCODING_PCM_16BIT,
-                AudioRecordConfig.OutputFormat.WAV);
+                AudioRecordConfig.OutputFormat.PCM);
 
         mAudioRecord = new AudioRecord(mConfig, this.getExternalCacheDir() + "/",
                 "demo");
@@ -86,6 +89,7 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
 
 
     wav wav1 = new wav();
+    com.android.librecord.mp3.mp3 mp31 = new mp3();
 
     @Override
     public void onClick(View view) {
@@ -94,6 +98,7 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
             case R.id.mr_btnStart:
                 mAudioRecord.start();
 //                wav1.startRecording(this);
+//                mp31.record(this);
                 break;
             case R.id.mr_btnPause:
                 mAudioRecord.pause();
@@ -101,6 +106,7 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
             case R.id.mr_btnStop:
                 mAudioRecord.stop();
 //                wav1.stopRecording();
+//                mp31.stop();
                 break;
             case R.id.mr_btnPlaySound:
                 if (path != null && checkExist(path)) {
@@ -142,9 +148,21 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == CHOOSE_FILE_CODE) {
                 Uri uri = data.getData();
-                path = uri.getPath();
-                mTvChooseFile.setText(path);
-                Log.d("521", "onActivityResult: " + uri.getEncodedPath());
+                if ("file".equalsIgnoreCase(uri.getScheme())) {//使用第三方应用打开
+                    path = uri.getPath();
+                    mTvChooseFile.setText(path);
+                    Toast.makeText(this, path + "11111", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {//Android4.4以上
+                    path = Uri2path.getPath(this, uri);
+                    mTvChooseFile.setText(path);
+                    Toast.makeText(this, path, Toast.LENGTH_SHORT).show();
+                } else {//4.4以下下系统调用方法
+                    path = Uri2path.getRealPathFromURI(this, uri);
+                    mTvChooseFile.setText(path);
+                    Toast.makeText(this, path + "222222", Toast.LENGTH_SHORT).show();
+                }
             }
         } else {
             Log.e(TAG1, "onActivityResult() error, resultCode: " + resultCode);

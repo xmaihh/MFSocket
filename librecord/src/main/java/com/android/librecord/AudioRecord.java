@@ -159,17 +159,23 @@ public class AudioRecord {
                 break;
             case MP3:
                 mFileOutputStream = new FileOutputStream(strFilePath + strFileName + mRecordConfig.outputFormat.getName());
+                int channel = mRecordConfig.channelConfig;
+                if (mRecordConfig.channelConfig == AudioFormat.CHANNEL_IN_STEREO) {
+                    channel = 2;
+                } else if (mRecordConfig.channelConfig == AudioFormat.CHANNEL_IN_MONO) {
+                    channel = 1;
+                }
+                int kbps = 128;
                 mMp3Encode = new MP3Encode(
                         mRecordConfig.sampleRate,
-                        mRecordConfig.channelConfig,
-                        mRecordConfig.channelConfig,
-                        mRecordConfig.audioFormat, 5);
+                        channel,
+                        mRecordConfig.sampleRate,
+                        kbps, 5);
                 mMp3Encode.prepare();
                 break;
             case WAV:
                 mWavEncode = new WAVEncode();
                 mRandomAccessFile = new RandomAccessFile(strFilePath + strFileName + mRecordConfig.outputFormat.getName(), "rw");
-                Log.d("521", "initEncode: " + mRandomAccessFile.getFD().toString());
                 // 留出文件头的位置
                 mRandomAccessFile.seek(44);
                 break;
@@ -182,13 +188,22 @@ public class AudioRecord {
     void FSDataOutputStream() throws IOException {
         // 文件输出流
         byte[] readBuffer = new byte[bufferSizeInBytes];
+        short[] readMP3Buffer = new short[bufferSizeInBytes];
         int readSize = 0;
         while (mState == AudioRecordState.RECORDING && mAudioRecord.getRecordingState() == android.media.AudioRecord.RECORDSTATE_RECORDING) {
-            readSize = mAudioRecord.read(readBuffer, 0, bufferSizeInBytes);
-            // 编码
-            Encode(readSize, readBuffer);
-            if (isPlaying()) {
-                AudioTrack.getInstance().play(readBuffer);
+            if (mRecordConfig.outputFormat == AudioRecordConfig.OutputFormat.MP3) {
+                readSize = mAudioRecord.read(readMP3Buffer, 0, bufferSizeInBytes);
+//                Encode(readSize, shortToBytes(readMP3Buffer));
+                EncodeMp3(readSize, readMP3Buffer);
+                if (isPlaying()) {
+                    AudioTrack.getInstance().play(shortToBytes(readMP3Buffer));
+                }
+            } else {
+                readSize = mAudioRecord.read(readBuffer, 0, bufferSizeInBytes);
+                Encode(readSize, readBuffer);
+                if (isPlaying()) {
+                    AudioTrack.getInstance().play(readBuffer);
+                }
             }
         }
 
@@ -211,8 +226,6 @@ public class AudioRecord {
                     } else if (mRecordConfig.audioFormat == AudioFormat.ENCODING_PCM_16BIT) {
                         bitRate = 16;
                     }
-
-                    Log.d(TAG, "FSDataOutputStream: " + channel + "-*-" + bitRate + "-*-" + sampleRate);
 
                     long byteRate = sampleRate * bitRate * channel / 8;
                     mWavEncode.WriteWaveFileHeader(mRandomAccessFile,
@@ -247,18 +260,26 @@ public class AudioRecord {
                         mAacEncode.encode(readSize, readBuffer, mFileOutputStream);
                     }
                     break;
-                case MP3:
-                    if (mMp3Encode != null && mFileOutputStream != null) {
-                        mMp3Encode.encode(readSize, bytesToShort(readBuffer), mFileOutputStream);
-                    }
-                    break;
+//                case MP3:
+//                    if (mMp3Encode != null && mFileOutputStream != null) {
+//
+//                        Log.d(TAG, "Encode: " + readSize);
+//                        mMp3Encode.encode(readSize, bytesToShort(readBuffer), mFileOutputStream);
+//                    }
+//                    break;
                 case WAV:
                     if (mRandomAccessFile != null) {
-                        Log.d("521", "Encode: ");
                         mRandomAccessFile.write(readBuffer, 0, bufferSizeInBytes);
                     }
                     break;
             }
+        }
+    }
+
+
+    void EncodeMp3(int readSize, short[] readBuffer) throws IOException{
+        if (mMp3Encode != null && mFileOutputStream != null) {
+            mMp3Encode.encode(readSize, readBuffer, mFileOutputStream);
         }
     }
 

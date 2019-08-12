@@ -12,7 +12,7 @@ import android.provider.MediaStore;
 
 @Deprecated
 public class Uri2path {
-    public String getRealPathFromURI(Context ctx, Uri contentUri) {
+    public static String getRealPathFromURI(Context ctx, Uri contentUri) {
         String res = null;
         String[] proj = {MediaStore.Images.Media.DATA};
         Cursor cursor = ctx.getContentResolver().query(contentUri, proj, null, null, null);
@@ -29,7 +29,7 @@ public class Uri2path {
      * 专为Android4.4设计的从Uri获取文件绝对路径，以前的方法已不好使
      */
     @SuppressLint("NewApi")
-    public String getPath(final Context context, final Uri uri) {
+    public static String getPath(final Context context, final Uri uri) {
 
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
@@ -96,8 +96,8 @@ public class Uri2path {
      * @param selectionArgs (Optional) Selection arguments used in the query.
      * @return The value of the _data column, which is typically a file path.
      */
-    public String getDataColumn(Context context, Uri uri, String selection,
-                                String[] selectionArgs) {
+    public static String getDataColumn(Context context, Uri uri, String selection,
+                                       String[] selectionArgs) {
 
         Cursor cursor = null;
         final String column = "_data";
@@ -121,7 +121,7 @@ public class Uri2path {
      * @param uri The Uri to check.
      * @return Whether the Uri authority is ExternalStorageProvider.
      */
-    public boolean isExternalStorageDocument(Uri uri) {
+    public static boolean isExternalStorageDocument(Uri uri) {
         return "com.android.externalstorage.documents".equals(uri.getAuthority());
     }
 
@@ -129,7 +129,7 @@ public class Uri2path {
      * @param uri The Uri to check.
      * @return Whether the Uri authority is DownloadsProvider.
      */
-    public boolean isDownloadsDocument(Uri uri) {
+    public static boolean isDownloadsDocument(Uri uri) {
         return "com.android.providers.downloads.documents".equals(uri.getAuthority());
     }
 
@@ -137,7 +137,7 @@ public class Uri2path {
      * @param uri The Uri to check.
      * @return Whether the Uri authority is MediaProvider.
      */
-    public boolean isMediaDocument(Uri uri) {
+    public static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 }
