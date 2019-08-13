@@ -12,14 +12,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.RadioGroup;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.librecord.AudioRecord;
 import com.android.librecord.AudioRecordConfig;
-import com.android.librecord.mp3.mp3;
-import com.android.librecord.wav.wav;
 
 import org.fmod.core.FmodUtils;
 
@@ -27,10 +27,11 @@ import java.io.File;
 
 import tp.xmaihh.sample.utils.Uri2path;
 
-public class AudioRecorderActivity extends Activity implements View.OnClickListener {
+public class AudioRecorderActivity extends Activity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
     private RadioGroup mRGOutputFormat;
     private RadioGroup mRGSamplingRate;
     private RadioGroup mRGBitRate;
+    private RadioGroup mRGChannel;
     private TextView mTvFilePath;
     private TextView mTvRecordState;
     private TextView mTvChooseFile;
@@ -38,10 +39,18 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
     private Button mBtnPause;
     private Button mBtnStop;
     private Button mBtnPlaySound;
+    private Switch mSWplaying;
 
     private AudioRecord mAudioRecord;
     private AudioRecordConfig mConfig;
     private String path;
+    private boolean isPaused = false;  //是否暂停
+    private AudioRecorderActivityPState mState = AudioRecorderActivityPState.RELEASE;
+    private AudioRecordConfig.OutputFormat outputFormat = AudioRecordConfig.OutputFormat.MP3;
+    private int sampleRate = AudioRecordConfig.SampleRate.SAMPPLERATE_44100;
+    private int bitRate = AudioFormat.ENCODING_PCM_16BIT;
+    private int channels = AudioFormat.CHANNEL_IN_STEREO;
+    private boolean isPlaying = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +61,7 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
         mRGOutputFormat = findViewById(R.id.mr_rgOutputFormat);
         mRGSamplingRate = findViewById(R.id.mr_rgSamplingRate);
         mRGBitRate = findViewById(R.id.mr_rgBitrate);
+        mRGChannel = findViewById(R.id.mr_rgChannel);
         mTvFilePath = findViewById(R.id.mr_tvFilePath);
         mTvRecordState = findViewById(R.id.mr_tvTimeState);
         mBtnStart = findViewById(R.id.mr_btnStart);
@@ -59,6 +69,7 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
         mBtnStop = findViewById(R.id.mr_btnStop);
         mBtnPlaySound = findViewById(R.id.mr_btnPlaySound);
         mTvChooseFile = findViewById(R.id.mr_tvChooseFile);
+        mSWplaying = findViewById(R.id.mr_switch);
 
         mBtnStart.setOnClickListener(this);
         mBtnPause.setOnClickListener(this);
@@ -66,16 +77,18 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
         mTvChooseFile.setOnClickListener(this);
         mBtnPlaySound.setOnClickListener(this);
 
-        mConfig = new AudioRecordConfig(
-                MediaRecorder.AudioSource.MIC,
-                AudioRecordConfig.SampleRate.MID_QUALITY,
-                AudioFormat.CHANNEL_IN_MONO,
-                AudioFormat.ENCODING_PCM_16BIT,
-                AudioRecordConfig.OutputFormat.PCM);
+        mRGOutputFormat.setOnCheckedChangeListener(this);
+        mRGBitRate.setOnCheckedChangeListener(this);
+        mRGSamplingRate.setOnCheckedChangeListener(this);
+        mRGChannel.setOnCheckedChangeListener(this);
+        mSWplaying.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                isPlaying = mSWplaying.isChecked();
+                Log.d(TAG, "onCheckedChanged: RealTime " + isPlaying);
+            }
+        });
 
-        mAudioRecord = new AudioRecord(mConfig, this.getExternalCacheDir() + "/",
-                "demo");
-        mAudioRecord.prepare();
 
         // Request necessary permissions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -85,28 +98,50 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
                 requestPermissions(perms, 200);
             }
         }
+
+        prepare();
     }
 
+    void prepare() {
+        if (mState == AudioRecorderActivityPState.RELEASE) {
+            mConfig = new AudioRecordConfig(
+                    MediaRecorder.AudioSource.MIC,
+                    sampleRate,
+                    channels,
+                    bitRate,
+                    outputFormat);
+            mAudioRecord = new AudioRecord(mConfig, this.getExternalCacheDir() + "/",
+                    "demo");
+            mAudioRecord.prepare();
 
-    wav wav1 = new wav();
-    com.android.librecord.mp3.mp3 mp31 = new mp3();
+            updateState(AudioRecorderActivityPState.PREPARE);
+        } else {
+            Toast.makeText(this, "Please click the stop button.", Toast.LENGTH_LONG).show();
+        }
+    }
+
 
     @Override
     public void onClick(View view) {
         int id = view.getId();
         switch (id) {
             case R.id.mr_btnStart:
+
                 mAudioRecord.start();
-//                wav1.startRecording(this);
-//                mp31.record(this);
                 break;
             case R.id.mr_btnPause:
-                mAudioRecord.pause();
+                if (isPaused) {
+                    isPaused = false;
+                    mAudioRecord.resume();
+                    mBtnPause.setText(R.string.mr_pause);
+                } else {
+                    isPaused = true;
+                    mAudioRecord.pause();
+                    mBtnPause.setText(R.string.mr_resume);
+                }
                 break;
             case R.id.mr_btnStop:
                 mAudioRecord.stop();
-//                wav1.stopRecording();
-//                mp31.stop();
                 break;
             case R.id.mr_btnPlaySound:
                 if (path != null && checkExist(path)) {
@@ -117,9 +152,6 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
                 break;
             case R.id.mr_tvChooseFile:
                 chooseFile();
-//                AudioTrack.getInstance().prepare(mConfig);
-//                AudioTrack.getInstance().start();
-//                AudioTrack.getInstance().playPCMFile(this.getExternalCacheDir() + "/demo.pcm");
                 break;
             default:
                 break;
@@ -171,6 +203,14 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    void updateState(AudioRecorderActivityPState pState) {
+        if (mState == pState) {
+            return;
+        } else {
+            mState = pState;
+        }
+    }
+
     @Override
     protected void onDestroy() {
         FmodUtils.getInstance(this).close();
@@ -180,5 +220,66 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
     public static boolean checkExist(String filepath) {
         File file = new File(filepath);
         return file.exists();
+    }
+
+    String TAG = "521";
+
+    @Override
+    public void onCheckedChanged(RadioGroup radioGroup, int id) {
+        if (mState == AudioRecorderActivityPState.RELEASE) {
+            switch (id) {
+                case R.id.mr_rbOutputFormat_mp3:
+                    outputFormat = AudioRecordConfig.OutputFormat.MP3;
+                    Log.d(TAG, "onCheckedChanged: mp3");
+                    break;
+                case R.id.mr_rbOutputFormat_aac:
+                    outputFormat = AudioRecordConfig.OutputFormat.AAC;
+                    Log.d(TAG, "onCheckedChanged: aac");
+                    break;
+                case R.id.mr_rbOutputFormat_wav:
+                    outputFormat = AudioRecordConfig.OutputFormat.WAV;
+                    Log.d(TAG, "onCheckedChanged: wav");
+                    break;
+                case R.id.mr_rbOutputFormat_pcm:
+                    outputFormat = AudioRecordConfig.OutputFormat.PCM;
+                    Log.d(TAG, "onCheckedChanged: pcm");
+                    break;
+                case R.id.mr_rbSamplingRate_800:
+                    sampleRate = AudioRecordConfig.SampleRate.SAMPPLERATE_800;
+                    Log.d(TAG, "onCheckedChanged: sampleRate 800");
+                    break;
+                case R.id.mr_rbSamplingRate_1600:
+                    sampleRate = AudioRecordConfig.SampleRate.SAMPPLERATE_1600;
+                    Log.d(TAG, "onCheckedChanged: sampleRate 1600");
+                    break;
+                case R.id.mr_rbSamplingRate_44100:
+                    sampleRate = AudioRecordConfig.SampleRate.SAMPPLERATE_44100;
+                    Log.d(TAG, "onCheckedChanged: sampleRate 44100");
+                    break;
+                case R.id.mr_rbSamplingRate_48000:
+                    sampleRate = AudioRecordConfig.SampleRate.SAMPPLERATE_48000;
+                    Log.d(TAG, "onCheckedChanged: sampleRate 48000");
+                    break;
+                case R.id.mr_rbBitrate_8:
+                    bitRate = AudioFormat.ENCODING_PCM_8BIT;
+                    Log.d(TAG, "onCheckedChanged: bitRate 8");
+                    break;
+                case R.id.mr_rbBitrate_16:
+                    bitRate = AudioFormat.ENCODING_PCM_16BIT;
+                    Log.d(TAG, "onCheckedChanged: bitRate 16");
+                    break;
+                case R.id.mr_rbChannel_1:
+                    channels = AudioFormat.CHANNEL_IN_MONO;
+                    Log.d(TAG, "onCheckedChanged: channel MONO");
+                    break;
+                case R.id.mr_rbChannel_2:
+                    channels = AudioFormat.CHANNEL_IN_STEREO;
+                    Log.d(TAG, "onCheckedChanged: channel STEREO");
+                    break;
+            }
+
+        } else {
+            Toast.makeText(this, "Please click the stop button.", Toast.LENGTH_LONG).show();
+        }
     }
 }

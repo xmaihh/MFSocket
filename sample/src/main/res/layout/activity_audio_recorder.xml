@@ -224,6 +224,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
+        android:checked="false"
         android:showText="true"
         android:switchMinWidth="20dp"
         android:text="RealTime(Plug in earphone)"

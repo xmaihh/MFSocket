@@ -13,6 +13,7 @@ import org.fmod.core.FmodUtils;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+
 public class MainActivity extends Activity {
     ExecutorService pool = Executors.newSingleThreadExecutor();
     boolean isPlaying = false;
@@ -25,6 +26,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         FmodUtils.getInstance(this);
+
     }
 
     public void playSound(View view) {

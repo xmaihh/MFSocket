@@ -14,7 +14,7 @@ public class amr {
         // 采样率
         int sampleRate = 44100;
         // 声道
-        int channelConfig = AudioFormat.CHANNEL_IN_MONO;//单声道
+        int channelConfig = AudioFormat.CHANNEL_CONFIGURATION_DEFAULT;//默认单声道
         // 采样位数
         int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
 
@@ -25,9 +25,9 @@ public class amr {
         // 设置音频采样率
         mediaRecorder.setAudioSamplingRate(sampleRate);
         // 设置音频声道
-        mediaRecorder.setAudioChannels(channelConfig);
+        mediaRecorder.setAudioChannels(1);
         // 设置音频采样位数
-        mediaRecorder.setAudioEncodingBitRate(audioFormat);
+        mediaRecorder.setAudioEncodingBitRate(16);
         // 设置音频格式 amr
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
         // 设置录音文件

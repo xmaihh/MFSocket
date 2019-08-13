@@ -34,7 +34,7 @@ public class AudioRecordConfig {
     // 音源
     int audioSource = MediaRecorder.AudioSource.MIC;
     // 采样率
-    int sampleRate = SampleRate.MID_QUALITY;
+    int sampleRate = SampleRate.SAMPPLERATE_44100;
     // 声道
     int channelConfig = AudioFormat.CHANNEL_IN_MONO;//单声道
     // 采样位数
@@ -48,6 +48,11 @@ public class AudioRecordConfig {
         MP3(1, ".mp3"),
         WAV(2, ".wav"),
         PCM(3, ".pcm"),
+        /**
+         * @deprecated
+         */
+        @Deprecated
+        @SuppressWarnings("Not supported yet.")
         AMR(4, ".amr");
 
         public static String getName(int index) {
@@ -78,10 +83,10 @@ public class AudioRecordConfig {
     }
 
     public final class SampleRate {
-        public static final int HIGHT_QUALITY = 48000;
-        public static final int MID_QUALITY = 44100;
-        public static final int LOW_QUALITY = 1600;
-        public static final int PHONE_QUALITY = 800;
+        public static final int SAMPPLERATE_48000 = 48000;
+        public static final int SAMPPLERATE_44100 = 44100;
+        public static final int SAMPPLERATE_1600 = 1600;
+        public static final int SAMPPLERATE_800 = 800;
 
         SampleRate() {
             throw new RuntimeException("Stub!");

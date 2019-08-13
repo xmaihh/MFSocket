@@ -1,7 +1,6 @@
 package com.android.librecord;
 
 import android.media.AudioFormat;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import java.io.FileOutputStream;
@@ -22,6 +21,7 @@ public class AudioRecord {
     private AACEncode mAacEncode;
     private MP3Encode mMp3Encode;
     private WAVEncode mWavEncode;
+    private AMREncode mAmrEncode;
     // 边录边播 开关
     private boolean isPlaying = false;
 
@@ -50,7 +50,7 @@ public class AudioRecord {
                     mRecordConfig.audioFormat);
             mAudioRecord = new android.media.AudioRecord(
                     mRecordConfig.audioSource, mRecordConfig.sampleRate,
-                    mRecordConfig.channelConfig,
+                    AudioFormat.CHANNEL_IN_STEREO,
                     mRecordConfig.audioFormat, bufferSizeInBytes);
             if (isPlaying()) {
                 AudioTrack.getInstance().prepare(mRecordConfig);
@@ -58,7 +58,6 @@ public class AudioRecord {
             updateState(AudioRecordState.PREPARE);
         }
     }
-
 
     // 开始录音
     public void start() {
@@ -182,6 +181,13 @@ public class AudioRecord {
             case PCM:
                 mFileOutputStream = new FileOutputStream(strFilePath + strFileName + mRecordConfig.outputFormat.getName());
                 break;
+            case AMR:
+                mAmrEncode = new AMREncode();
+                mFileOutputStream = new FileOutputStream(strFilePath + strFileName + mRecordConfig.outputFormat.getName());
+                byte[] header = new byte[]{'#', '!', 'A', 'M', 'R', '\n'};  //写入AMR-NB文件头
+                mFileOutputStream.write(header);
+                mAmrEncode.prepare();
+                break;
         }
     }
 
@@ -254,6 +260,9 @@ public class AudioRecord {
                     }
                     break;
                 case AMR:
+                    if (mAmrEncode != null && mFileOutputStream != null) {
+                        mAmrEncode.encode(readSize, readBuffer, mFileOutputStream);
+                    }
                     break;
                 case AAC:
                     if (mAacEncode != null && mFileOutputStream != null) {
@@ -276,8 +285,7 @@ public class AudioRecord {
         }
     }
 
-
-    void EncodeMp3(int readSize, short[] readBuffer) throws IOException{
+    void EncodeMp3(int readSize, short[] readBuffer) throws IOException {
         if (mMp3Encode != null && mFileOutputStream != null) {
             mMp3Encode.encode(readSize, readBuffer, mFileOutputStream);
         }

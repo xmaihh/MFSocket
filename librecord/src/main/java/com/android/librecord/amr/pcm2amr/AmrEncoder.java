@@ -7,6 +7,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * AMR-NB文件头： "#!AMR\n" (or 0x2321414d520a in hexadecimal)(引号内的部分)
+ * 语音带宽范围：300－3400Hz
+ * <p>
+ * 8KHz抽样
+ * <p>
+ * AMR-WB 文件头："#!AMR-WB\n" (or 0x2321414d522d57420a in hexadecimal).（引号内）
+ * 语音带宽范围： 50－7000Hz
+ * <p>
+ * 16KHz抽样
+ */
 public class AmrEncoder {
     public static void pcm2Amr(String pcmPath, String amrPath) {
         FileInputStream fis;

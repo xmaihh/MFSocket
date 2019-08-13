@@ -19,7 +19,7 @@ import java.nio.ByteBuffer;
  */
 public class AACEncode {
 
-    String MIME_TYPE = "audio/mp4a-latm";
+    String MIME_TYPE = MediaFormat.MIMETYPE_AUDIO_AAC;
     int CHANNEL_COUNT = 2;
     int SAMPLE_RATE = 44100;
     int BIT_RATE = 64000;
