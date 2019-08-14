@@ -24,6 +24,8 @@ import com.android.librecord.AudioRecordConfig;
 import org.fmod.core.FmodUtils;
 
 import java.io.File;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import tp.xmaihh.sample.utils.Uri2path;
 
@@ -51,12 +53,13 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
     private int bitRate = AudioFormat.ENCODING_PCM_16BIT;
     private int channels = AudioFormat.CHANNEL_IN_STEREO;
     private boolean isPlaying = false;
+    private ExecutorService mExecutor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_recorder);
-
+        mExecutor = Executors.newCachedThreadPool();
         //*
         mRGOutputFormat = findViewById(R.id.mr_rgOutputFormat);
         mRGSamplingRate = findViewById(R.id.mr_rgSamplingRate);
@@ -115,37 +118,82 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
             mAudioRecord.prepare();
 
             updateState(AudioRecorderActivityPState.PREPARE);
-        } else {
-            Toast.makeText(this, "Please click the stop button.", Toast.LENGTH_LONG).show();
         }
     }
 
+    void start() {
+        if (mState == AudioRecorderActivityPState.PLAYING) {
+            Toast.makeText(this, "AudioRecord is Recording.", Toast.LENGTH_LONG).show();
+        }
+        if (mState == AudioRecorderActivityPState.RELEASE) {
+            Toast.makeText(this, "Please click the stop button.", Toast.LENGTH_LONG).show();
+        }
+        mAudioRecord.start();
+        updateState(AudioRecorderActivityPState.PLAYING);
+    }
+
+    void pause() {
+        if (mState == AudioRecorderActivityPState.PLAYING) {
+            isPaused = true;
+            mAudioRecord.pause();
+            mBtnPause.setText(R.string.mr_resume);
+            updateState(AudioRecorderActivityPState.PAUSED);
+            return;
+        } else {
+            Toast.makeText(this, "null", Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    void resume() {
+        if (mState == AudioRecorderActivityPState.PAUSED) {
+            isPaused = false;
+            mAudioRecord.resume();
+            mBtnPause.setText(R.string.mr_pause);
+            updateState(AudioRecorderActivityPState.PLAYING);
+        }
+    }
+
+    void stop() {
+        if (mState == AudioRecorderActivityPState.PLAYING || mState == AudioRecorderActivityPState.PAUSED) {
+            mAudioRecord.stop();
+            updateState(AudioRecorderActivityPState.STOP);
+            release();
+        }
+
+        prepare();
+    }
+
+    void release() {
+        updateState(AudioRecorderActivityPState.RELEASE);
+    }
 
     @Override
     public void onClick(View view) {
         int id = view.getId();
         switch (id) {
             case R.id.mr_btnStart:
-
-                mAudioRecord.start();
+                start();
                 break;
             case R.id.mr_btnPause:
                 if (isPaused) {
-                    isPaused = false;
-                    mAudioRecord.resume();
-                    mBtnPause.setText(R.string.mr_pause);
+                    resume();
                 } else {
-                    isPaused = true;
-                    mAudioRecord.pause();
-                    mBtnPause.setText(R.string.mr_resume);
+                    pause();
                 }
                 break;
             case R.id.mr_btnStop:
-                mAudioRecord.stop();
+                stop();
                 break;
             case R.id.mr_btnPlaySound:
                 if (path != null && checkExist(path)) {
-                    FmodUtils.getInstance(this).playSound(path, FmodUtils.Effect.ORIGINAL.getMode());
+                    mExecutor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            FmodUtils.getInstance(AudioRecorderActivity.this).playSound(path, FmodUtils.Effect.ORIGINAL.getMode());
+                        }
+                    });
+
                 } else {
                     Toast.makeText(this, "No file is selected.", Toast.LENGTH_LONG).show();
                 }
@@ -214,6 +262,9 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         FmodUtils.getInstance(this).close();
+        if (mExecutor != null) {
+            mExecutor.shutdownNow();
+        }
         super.onDestroy();
     }
 
@@ -226,7 +277,10 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
 
     @Override
     public void onCheckedChanged(RadioGroup radioGroup, int id) {
-        if (mState == AudioRecorderActivityPState.RELEASE) {
+        if (mState == AudioRecorderActivityPState.PLAYING || mState == AudioRecorderActivityPState.PAUSED) {
+            Toast.makeText(this, "Please click the stop button.", Toast.LENGTH_LONG).show();
+            return;
+        } else {
             switch (id) {
                 case R.id.mr_rbOutputFormat_mp3:
                     outputFormat = AudioRecordConfig.OutputFormat.MP3;
@@ -277,9 +331,9 @@ public class AudioRecorderActivity extends Activity implements View.OnClickListe
                     Log.d(TAG, "onCheckedChanged: channel STEREO");
                     break;
             }
-
-        } else {
-            Toast.makeText(this, "Please click the stop button.", Toast.LENGTH_LONG).show();
+            prepare();
         }
+
+
     }
 }
