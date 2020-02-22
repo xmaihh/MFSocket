@@ -186,7 +186,7 @@ public class MainActivity extends Activity implements OnTouchListener, Runnable
 //    	catch (UnsatisfiedLinkError e) { }
 		// Try release libraries...
 		try { System.loadLibrary("fmod");
-		      System.loadLibrary("fmodstudio"); }
+		      System.loadLibrary("fmodL"); }
 		catch (UnsatisfiedLinkError e) { }
     	
         System.loadLibrary("sound");
